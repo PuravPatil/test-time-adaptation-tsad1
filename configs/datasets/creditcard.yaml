@@ -1,0 +1,5 @@
+name: creditcard
+description: Credit card transactions (fraud as anomaly)
+loader: audit.data.creditcard
+# TODO: set window size and train/test split to match the upstream setup
+window: null

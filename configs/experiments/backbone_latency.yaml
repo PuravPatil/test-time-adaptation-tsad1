@@ -1,0 +1,9 @@
+# Uno: backbone generality and per-step inference latency on CPU.
+name: backbone_latency
+datasets: [smd, msl, smap, creditcard]
+methods: [m2n2, candi]
+threshold: fixed
+overrides:
+  all:
+    backbone: [default]     # TODO: add the backbones to compare
+measure_latency: true

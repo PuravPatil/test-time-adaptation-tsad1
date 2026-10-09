@@ -1,0 +1,8 @@
+# Tanny: does normalization alone explain M2N2's gains?
+name: revin
+datasets: [smd, msl, smap, creditcard]
+methods: [m2n2]
+threshold: fixed
+overrides:
+  m2n2:
+    normalization: [ema, revin]   # run both arms

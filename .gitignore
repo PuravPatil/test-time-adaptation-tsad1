@@ -1,0 +1,28 @@
+# Python
+__pycache__/
+*.py[cod]
+*.egg-info/
+.venv/
+venv/
+.pytest_cache/
+.ipynb_checkpoints/
+
+# Data and run outputs (keep folder placeholders)
+data/raw/*
+data/processed/*
+!data/raw/.gitkeep
+!data/processed/.gitkeep
+results/runs/*
+!results/runs/.gitkeep
+
+# Model weights and logs
+*.pt
+*.pth
+*.ckpt
+wandb/
+logs/
+
+# OS / editors
+.DS_Store
+.vscode/
+.idea/

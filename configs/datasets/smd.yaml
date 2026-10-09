@@ -1,0 +1,5 @@
+name: smd
+description: Server Machine Dataset (28 machines)
+loader: audit.data.smd
+# TODO: set window size and any entity selection to match the upstream M2N2 setup
+window: null

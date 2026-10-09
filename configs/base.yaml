@@ -1,0 +1,12 @@
+# Shared defaults for every run. Experiment configs override these.
+device: cpu            # all comparison runs on CPU for identical numerics across machines
+seeds: [0, 1, 2]       # every result is reported over this seed list
+paths:
+  raw: data/raw
+  processed: data/processed
+  runs: results/runs
+  tables: results/tables
+metrics:
+  primary: [f1, auprc, pa_k]
+  reference: [f1_pa]     # reported only to compare with the papers' numbers
+  pa_k_values: [0, 20, 50, 80, 100]

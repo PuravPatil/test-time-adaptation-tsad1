@@ -1,0 +1,6 @@
+name: candi
+adapter: audit.methods.candi_adapter.CANDIAdapter
+upstream: third_party/CANDI
+backbone: default
+# TODO: copy hyperparameters from the upstream repo's configs, one block per dataset
+hparams: {}

@@ -1,0 +1,5 @@
+name: msl
+description: NASA Mars Science Laboratory rover telemetry
+loader: audit.data.msl
+# TODO: set window size to match the upstream M2N2 setup
+window: null

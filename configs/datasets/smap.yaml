@@ -1,0 +1,5 @@
+name: smap
+description: NASA Soil Moisture Active Passive satellite telemetry
+loader: audit.data.smap
+# TODO: set window size to match the upstream M2N2 setup
+window: null
