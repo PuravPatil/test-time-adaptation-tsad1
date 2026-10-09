@@ -9,9 +9,9 @@ Both methods run on the same data, with the same metrics (plain F1, AUPRC, PA%K;
 
 | Extension | Owner | Where |
 | --- | --- | --- |
-| RevIN in place of EMA detrending | Tanny | `src/audit/normalization/` |
+| RevIN in place of EMA detrending | Tanishka | `src/audit/normalization/` |
 | Streaming threshold in place of fixed τ | Purav | `src/audit/thresholds/` |
-| Backbone generality + inference latency | Uno | `src/audit/backbones/`, `src/audit/evaluation/latency.py` |
+| Backbone generality + inference latency | Unnati | `src/audit/backbones/`, `src/audit/evaluation/latency.py` |
 
 ## Setup
 
