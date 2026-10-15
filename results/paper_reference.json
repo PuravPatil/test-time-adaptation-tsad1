@@ -1,0 +1,108 @@
+{
+  "_note": "Paper numbers transcribed for comparison. 'candi_paper' = CANDI Table 1 (alpha=5%, F1 at the validation-percentile threshold). 'm2n2_paper' = M2N2 appendix (f1_best = F1 at the offline best threshold, f1_pa = point-adjusted). Verify against the PDFs before quoting.",
+  "candi_paper": {
+    "smd_1-7": {
+      "pretrained": {
+        "auroc": 0.883,
+        "auprc": 0.703,
+        "f1": 0.724
+      },
+      "m2n2": {
+        "auroc": 0.886,
+        "auprc": 0.718,
+        "f1": 0.723
+      },
+      "candi": {
+        "auroc": 0.922,
+        "auprc": 0.737,
+        "f1": 0.725
+      }
+    },
+    "smd_1-8": {
+      "pretrained": {
+        "auroc": 0.719,
+        "auprc": 0.332,
+        "f1": 0.092
+      },
+      "m2n2": {
+        "auroc": 0.772,
+        "auprc": 0.354,
+        "f1": 0.115
+      },
+      "candi": {
+        "auroc": 0.867,
+        "auprc": 0.423,
+        "f1": 0.213
+      }
+    },
+    "smd_2-1": {
+      "pretrained": {
+        "auroc": 0.648,
+        "auprc": 0.275,
+        "f1": 0.273
+      },
+      "m2n2": {
+        "auroc": 0.683,
+        "auprc": 0.296,
+        "f1": 0.309
+      },
+      "candi": {
+        "auroc": 0.78,
+        "auprc": 0.348,
+        "f1": 0.327
+      }
+    },
+    "smd_2-4": {
+      "pretrained": {
+        "auroc": 0.821,
+        "auprc": 0.457,
+        "f1": 0.316
+      },
+      "m2n2": {
+        "auroc": 0.828,
+        "auprc": 0.461,
+        "f1": 0.311
+      },
+      "candi": {
+        "auroc": 0.899,
+        "auprc": 0.6,
+        "f1": 0.512
+      }
+    },
+    "smd_3-2": {
+      "pretrained": {
+        "auroc": 0.451,
+        "auprc": 0.159,
+        "f1": 0.247
+      },
+      "m2n2": {
+        "auroc": 0.64,
+        "auprc": 0.188,
+        "f1": 0.194
+      },
+      "candi": {
+        "auroc": 0.717,
+        "auprc": 0.199,
+        "f1": 0.262
+      }
+    }
+  },
+  "m2n2_paper": {
+    "smd_1-4": {
+      "m2n2": {
+        "f1_best": 0.463,
+        "f1_pa": 0.874,
+        "auroc": 0.845,
+        "auprc": 0.354
+      }
+    },
+    "smd_2-1": {
+      "m2n2": {
+        "f1_best": 0.249,
+        "f1_pa": 0.974,
+        "auroc": 0.764,
+        "auprc": 0.28
+      }
+    }
+  }
+}

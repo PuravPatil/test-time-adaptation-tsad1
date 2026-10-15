@@ -5,12 +5,13 @@
 - pa_k:     PA%K (Kim et al., AAAI 2022). A labelled anomaly segment counts as
             fully detected only if more than K% of its points were flagged.
             K = 0 is ordinary point adjustment (F1-PA); K = 100 is plain F1.
+- auroc / f1_best: threshold-free AUROC and the oracle best-threshold F1
 - f1_pa:    point-adjusted F1, reported only to compare with the papers
 """
 from __future__ import annotations
 
 import numpy as np
-from sklearn.metrics import average_precision_score, f1_score
+from sklearn.metrics import average_precision_score, f1_score, precision_recall_curve, roc_auc_score
 
 
 def _check(labels, other) -> tuple[np.ndarray, np.ndarray]:
@@ -43,6 +44,22 @@ def auprc(labels, scores) -> float:
     return float(average_precision_score(labels, scores.astype(float)))
 
 
+def auroc(labels, scores) -> float:
+    labels, scores = _check(labels, scores)
+    if labels.sum() in (0, len(labels)):
+        return float("nan")
+    return float(roc_auc_score(labels, scores.astype(float)))
+
+
+def f1_best(labels, scores) -> float:
+    """Best point-wise F1 over every possible threshold (an oracle, as in M2N2's
+    `off_f1_best` option). Reference only: it uses the test labels."""
+    labels, scores = _check(labels, scores)
+    p, r, _ = precision_recall_curve(labels, scores.astype(float))
+    f = 2 * p * r / np.maximum(p + r, 1e-12)
+    return float(f.max())
+
+
 def adjust_predictions(labels, preds, k: float) -> np.ndarray:
     """PA%K adjustment of predictions; k is a percentage in [0, 100]."""
     if not 0 <= k <= 100:
@@ -69,6 +86,8 @@ def evaluate(labels, scores, preds, pa_k_values=(0, 20, 50, 80, 100)) -> dict:
     out = {
         "f1": point_f1(labels, preds),
         "auprc": auprc(labels, scores),
+        "auroc": auroc(labels, scores),
+        "f1_best": f1_best(labels, scores),
         "f1_pa": f1_pa(labels, preds),
     }
     for k in pa_k_values:

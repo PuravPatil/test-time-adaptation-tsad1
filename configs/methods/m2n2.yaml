@@ -3,5 +3,11 @@ adapter: audit.methods.m2n2_adapter.M2N2Adapter
 upstream: third_party/M2N2
 normalization: ema        # ema | revin  (Tanny's extension switches this)
 backbone: default         # Uno's extension swaps this
-# TODO: copy hyperparameters from the upstream repo's configs, one block per dataset
-hparams: {}
+# From the M2N2 paper, appendix Table 6 (MLP): SMD W=5, S_train=S_test=5, d=16,
+# per-machine EMA rate gamma and test-time learning rate lr (= eta).
+# Machines the paper did not tune use `default`. Epochs, batch size, MLP width and the
+# tau quantile are not given in the paper (assumptions).
+hparams:
+  default: {window: 5, stride: 5, latent: 16, gamma: 0.99, lr: 0.05}
+  smd_1-4: {gamma: 0.4,  lr: 0.1}
+  smd_2-1: {gamma: 0.99, lr: 0.05}

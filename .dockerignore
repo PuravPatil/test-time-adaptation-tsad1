@@ -1,0 +1,12 @@
+.git
+.github
+.venv
+__pycache__
+*.pyc
+.pytest_cache
+data
+results/runs
+results/tables
+third_party
+notebooks
+demo

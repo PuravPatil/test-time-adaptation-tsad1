@@ -1,0 +1,31 @@
+# One service per step. data/ and results/ live on your disk, not in the image.
+#   docker compose run --rm data        # download + preprocess SMD (needs internet)
+#   docker compose run --rm test
+#   docker compose run --rm quick       # one machine, one seed
+#   docker compose run --rm smd         # 6 machines x 3 methods x 3 seeds
+#   docker compose run --rm compare     # ours vs the papers' numbers
+x-base: &base
+  build: .
+  image: tsad
+  volumes:
+    - ./data:/app/data
+    - ./results:/app/results
+  cpus: 2            # batch-1 updates do not scale past ~2 threads; raise if you have spare cores
+  mem_limit: 4g      # CANDI's attention module is the memory-heavy part
+
+services:
+  data:
+    <<: *base
+    command: sh -c "python scripts/download_data.py && python scripts/preprocess.py"
+  test:
+    <<: *base
+    command: pytest -q
+  quick:
+    <<: *base
+    command: python scripts/run.py --config configs/experiments/smd_quick.yaml
+  smd:
+    <<: *base
+    command: python scripts/run.py --config configs/experiments/smd_reproduce.yaml
+  compare:
+    <<: *base
+    command: python scripts/compare_paper.py

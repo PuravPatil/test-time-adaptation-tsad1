@@ -1,0 +1,7 @@
+# CANDI's pre-trained detector with test-time adaptation switched off
+# (the "Pretrained" column of CANDI Table 1).
+name: pretrained
+adapter: audit.methods.candi_adapter.CANDIAdapter
+backbone: default
+hparams:
+  default: {adapt: false, alpha: 0.05}

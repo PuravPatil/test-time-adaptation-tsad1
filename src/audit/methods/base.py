@@ -32,3 +32,14 @@ class Detector(ABC):
         test-time adaptation. Thresholds calibrate on these. Return None
         if the method cannot provide them."""
         return None
+
+
+def resolve_hparams(config: dict, defaults: dict) -> dict:
+    """defaults < config['hparams']['default'] < config['hparams'][<dataset>].
+
+    The harness puts the dataset name into config['dataset']."""
+    hp = dict(defaults)
+    table = config.get("hparams") or {}
+    hp.update(table.get("default", {}))
+    hp.update(table.get(config.get("dataset", ""), {}))
+    return hp
