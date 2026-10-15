@@ -1,0 +1,8 @@
+# One machine, one seed: a fast check that everything runs end to end.
+name: smd_quick
+datasets: [smd_1-7]
+methods: [pretrained, m2n2, candi]
+threshold: [fixed, streaming]
+threshold_config:
+  quantile: 0.95
+seeds: [0]

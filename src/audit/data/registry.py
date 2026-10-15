@@ -23,7 +23,7 @@ class Dataset:
             raise ValueError(f"{self.name}: test values and labels differ in length")
 
 
-_LOADERS: dict[str, Callable[[str], Dataset]] = {}
+_LOADERS: dict[str, Callable[..., Dataset]] = {}
 
 
 def register(name: str):
@@ -34,16 +34,16 @@ def register(name: str):
 
 
 def load_dataset(name: str, processed_dir: str = "data/processed") -> Dataset:
-    if name not in _LOADERS:
+    """Load by name. ``smd`` loads a default entity; ``smd_1-7`` loads
+    machine-1-7 (anything after the first underscore is passed as the entity)."""
+    base, _, entity = name.partition("_")
+    if base not in _LOADERS:
         raise KeyError(
-            f"No loader registered for '{name}'. Write one in src/audit/data/ "
-            f"and decorate it with @register('{name}'). Known: {sorted(_LOADERS)}"
+            f"No loader registered for '{base}'. Write one in src/audit/data/ "
+            f"and decorate it with @register('{base}'). Known: {sorted(_LOADERS)}"
         )
-    return _LOADERS[name](processed_dir)
+    if entity:
+        return _LOADERS[base](processed_dir, entity=f"machine-{entity}")
+    return _LOADERS[base](processed_dir)
 
 
-# TODO (weeks 1-3): add loaders for smd, msl, smap, creditcard, e.g.
-#
-# @register("smd")
-# def load_smd(processed_dir: str) -> Dataset:
-#     ...

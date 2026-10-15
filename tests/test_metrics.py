@@ -2,7 +2,7 @@ import numpy as np
 import pytest
 
 from audit.evaluation.metrics import (
-    adjust_predictions, anomaly_segments, auprc, evaluate, f1_pa, pa_k, point_f1,
+    adjust_predictions, anomaly_segments, auprc, auroc, evaluate, f1_best, f1_pa, pa_k, point_f1,
 )
 
 # One 4-point anomaly segment (indices 2-5) and one 2-point segment (8-9).
@@ -43,9 +43,18 @@ def test_auprc_perfect_scores():
 
 def test_evaluate_keys():
     out = evaluate(LABELS, PREDS.astype(float), PREDS, pa_k_values=(0, 50))
-    assert set(out) == {"f1", "auprc", "f1_pa", "pa_k_0", "pa_k_50"}
+    assert set(out) == {"f1", "auprc", "auroc", "f1_best", "f1_pa", "pa_k_0", "pa_k_50"}
 
 
 def test_length_mismatch_raises():
     with pytest.raises(ValueError):
         point_f1(LABELS, PREDS[:-1])
+
+
+def test_auroc_perfect_and_inverted():
+    assert auroc(LABELS, LABELS.astype(float)) == pytest.approx(1.0)
+    assert auroc(LABELS, 1.0 - LABELS) == pytest.approx(0.0)
+
+
+def test_f1_best_perfect_scores():
+    assert f1_best(LABELS, LABELS.astype(float)) == pytest.approx(1.0)

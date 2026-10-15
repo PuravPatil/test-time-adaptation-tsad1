@@ -2,5 +2,19 @@ name: candi
 adapter: audit.methods.candi_adapter.CANDIAdapter
 upstream: third_party/CANDI
 backbone: default
-# TODO: copy hyperparameters from the upstream repo's configs, one block per dataset
-hparams: {}
+# Settings quoted from the CANDI paper: L=10, batch 256, Adam 1e-3 cosine 30 epochs,
+# SGD-Nesterov 0.9 / wd 1e-4 / clip 0.5 for SANA, hidden 512, alpha = 5%.
+# NOT given in the paper (our assumptions, tune on validation data):
+#   latent=16, hidden=128 (MLP width), gate_init=0.1, adapt_lr=0.01, adapt_steps=1,
+#   ridge=1e-3 (covariance shrinkage), heads=4, conv kernel=3.
+hparams:
+  default:
+    window: 10
+    alpha: 0.05
+    latent: 16
+    hidden: 128
+    sana_hidden: 512
+    gate_init: 0.1
+    adapt_lr: 0.01
+    adapt_steps: 1
+    min_buffer: 16

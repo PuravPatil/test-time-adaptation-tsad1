@@ -33,6 +33,22 @@ python scripts/make_tables.py
 
 Each run writes raw scores, predictions, metrics, the resolved config and the git commit hash to `results/runs/<experiment>/<dataset>/<method>/seed<k>/`.
 
+## Reproducing the SMD results (M2N2, CANDI, pre-trained MLP)
+
+```bash
+pip install -r requirements.txt && pip install -e .
+python scripts/download_data.py          # SMD machines 1-4, 1-7, 1-8, 2-1, 2-4, 3-2 (needs internet)
+python scripts/preprocess.py
+pytest -q                                # includes torch smoke tests of both detectors
+python scripts/run.py --config configs/experiments/smd_quick.yaml      # ~minutes: one machine, one seed
+python scripts/run.py --config configs/experiments/smd_reproduce.yaml  # 6 machines x 3 methods x 3 seeds
+python scripts/compare_paper.py          # ours vs the numbers in the papers
+```
+
+What is implemented, and what the papers leave open, is in the docstrings of
+`src/audit/methods/m2n2_adapter.py` and `candi_adapter.py` and the comments in
+`configs/methods/*.yaml`. Paper numbers: `results/paper_reference.json`.
+
 ## Layout
 
 ```
@@ -58,3 +74,18 @@ docs/           project plan and design
 ## Timeline
 
 Weeks 1–3 shared reproduction · weeks 4–6 extensions · weeks 7–8 demo and deployment.
+
+## Running in Docker (CPU)
+
+```bash
+docker compose build
+docker compose run --rm data      # download + preprocess SMD into ./data
+docker compose run --rm test
+docker compose run --rm quick     # one machine, one seed
+docker compose run --rm smd       # full SMD reproduction (6 machines x 3 methods x 3 seeds)
+docker compose run --rm compare   # ours vs the papers
+```
+
+CPU-only on purpose: the MLPs are tiny and test-time adaptation updates one window at a time,
+so a GPU would not help. Raise `cpus` / `mem_limit` in `docker-compose.yml` if your machine has spare capacity.
+Give Docker Desktop at least 4 GB of RAM. Results land in `./results` on your disk.

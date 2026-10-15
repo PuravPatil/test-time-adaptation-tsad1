@@ -35,13 +35,16 @@ def run_experiment(exp_path: str, config_dir: str = "configs") -> None:
     commit = git_commit()
 
     for ds_name, method_name, thr_name, seed in product(
-        exp["datasets"], exp["methods"], _as_list(exp.get("threshold", "fixed")), base["seeds"]
+        exp["datasets"], exp["methods"], _as_list(exp.get("threshold", "fixed")),
+        exp.get("seeds", base["seeds"])
     ):
         method_cfg = load_yaml(Path(config_dir) / "methods" / f"{method_name}.yaml")
         set_seed(seed)
         data = load_dataset(ds_name, base["paths"]["processed"])
 
-        detector = _load_class(method_cfg["adapter"])(method_cfg)
+        # The adapter picks its per-dataset hyperparameters from method_cfg["hparams"][ds_name].
+        run_cfg = {**method_cfg, "dataset": ds_name, **exp.get("method_overrides", {}).get(method_name, {})}
+        detector = _load_class(method_cfg["adapter"])(run_cfg)
         detector.fit(data.train)
 
         # Calibrate the threshold on training scores BEFORE the test stream,
@@ -67,6 +70,7 @@ def run_experiment(exp_path: str, config_dir: str = "configs") -> None:
         save_json(out / "run.json", {
             "experiment": exp, "method": method_cfg, "dataset": ds_name,
             "threshold": thr_name, "seed": seed, "commit": commit,
+            "detector_stats": getattr(detector, "stats", {}),
         })
         print(f"{ds_name:>10} {method_name:>6} {thr_name:>9} seed{seed}  "
-              f"F1={metrics['f1']:.3f}  AUPRC={metrics['auprc']:.3f}")
+              f"F1={metrics['f1']:.3f}  AUPRC={metrics['auprc']:.3f}  AUROC={metrics['auroc']:.3f}")
