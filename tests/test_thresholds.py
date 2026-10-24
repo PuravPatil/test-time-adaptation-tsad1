@@ -5,7 +5,7 @@ from audit.thresholds import FixedThreshold
 
 def test_fixed_threshold_with_tau():
     thr = FixedThreshold({"tau": 0.5})
-    assert thr.predict(np.array([0.1, 0.5, 0.9])).tolist() == [0, 0, 1]
+    assert thr.predict(np.array([0.1, 0.5, 0.9])).tolist() == [0, 1, 1]   # score >= tau, as the paper's code
 
 
 def test_fixed_threshold_from_quantile():

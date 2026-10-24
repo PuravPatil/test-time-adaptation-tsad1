@@ -24,3 +24,8 @@ def test_revin_gives_zero_mean_unit_std():
     shift, scale = make_normalizer("revin").step(w)
     z = (w - shift) / scale
     assert np.allclose(z.mean(0), 0, atol=1e-5) and np.allclose(z.std(0), 1, atol=1e-3)
+
+def test_none_leaves_the_window_unchanged():
+    w = np.arange(10, dtype=np.float32).reshape(5, 2)
+    shift, scale = make_normalizer("none", gamma=0.5).step(w)
+    assert np.array_equal((w - shift) / scale, w)

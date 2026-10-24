@@ -9,7 +9,7 @@ import urllib.request
 from pathlib import Path
 
 BASE = "https://raw.githubusercontent.com/NetManAIOps/OmniAnomaly/master/ServerMachineDataset"
-# M2N2 uses 1-4 and 2-1; CANDI uses 1-7, 1-8, 2-1, 2-4, 3-2.
+# M2N2 reports 1-4 and 2-1; the others are extra machines for our own runs.
 DEFAULT = ["1-4", "1-7", "1-8", "2-1", "2-4", "3-2"]
 ALL = [f"1-{i}" for i in range(1, 9)] + [f"2-{i}" for i in range(1, 10)] + [f"3-{i}" for i in range(1, 12)]
 

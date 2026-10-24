@@ -1,6 +1,6 @@
 # Shared defaults for every run. Experiment configs override these.
 device: cpu            # all comparison runs on CPU for identical numerics across machines
-seeds: [0, 1, 2]       # every result is reported over this seed list
+seeds: [2021, 2022, 2023, 2024, 2025]   # the official M2N2 scripts' five seeds
 paths:
   raw: data/raw
   processed: data/processed

@@ -35,11 +35,15 @@ class Detector(ABC):
 
 
 def resolve_hparams(config: dict, defaults: dict) -> dict:
-    """defaults < config['hparams']['default'] < config['hparams'][<dataset>].
+    """defaults < config['hparams']['default'] < config['hparams'][<dataset>]
+    < config['hparam_overrides'].
 
-    The harness puts the dataset name into config['dataset']."""
+    The harness puts the dataset name into config['dataset'], and an experiment's
+    ``hparams.<name>`` overrides into config['hparam_overrides'], so an explicit
+    experiment setting wins over the per-machine table."""
     hp = dict(defaults)
     table = config.get("hparams") or {}
     hp.update(table.get("default", {}))
     hp.update(table.get(config.get("dataset", ""), {}))
+    hp.update(config.get("hparam_overrides") or {})
     return hp

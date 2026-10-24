@@ -1,0 +1,10 @@
+# Sensitivity of M2N2 on SMD 2-1 to the threshold quantile (tau decides alarms AND adaptation).
+name: smd_2-1_tau_sweep
+datasets: [smd_2-1]
+methods: [m2n2]
+threshold: fixed
+threshold_config:
+  quantile: detector
+overrides:
+  m2n2:
+    hparams.tau_quantile: [0.99, 0.995, 0.9976]

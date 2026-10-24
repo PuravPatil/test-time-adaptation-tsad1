@@ -1,13 +1,17 @@
 name: m2n2
 adapter: audit.methods.m2n2_adapter.M2N2Adapter
 upstream: third_party/M2N2
-normalization: ema        # ema | revin  (Tanny's extension switches this)
-backbone: default         # Uno's extension swaps this
-# From the M2N2 paper, appendix Table 6 (MLP): SMD W=5, S_train=S_test=5, d=16,
-# per-machine EMA rate gamma and test-time learning rate lr (= eta).
-# Machines the paper did not tune use `default`. Epochs, batch size, MLP width and the
-# tau quantile are not given in the paper (assumptions).
+normalization: ema        # ema | revin | none  (Tanny's extension; none = detrend off)
+backbone: default         # the official M2N2 MLP (190 -> 95 -> 47 -> 16 -> ... for SMD); Uno's extension swaps this
+# Settings from the authors' official code (github.com/carrtesy/M2N2):
+#   scripts/MLP/train/MLP.sh   SMD: window = stride = 5, batch 8, latent 16; cfgs/train_defaults.yaml: epochs 10, lr 1e-3
+#   scripts/MLP/test/SMD_*.sh  "online + detrend" (= M2N2): gamma, test-time lr (ttlr), threshold quantile
+#     machine-1-4: gamma 0.4,  ttlr 0.1,  thresholding q97.0 (the script also runs q99.0)
+#     machine-2-1: gamma 0.99, ttlr 0.05, thresholding q99.76
+# Machines the paper does not report use `default` (our choice: gamma 0.99, lr 0.05, q99).
+# tau_quantile is the ONE threshold: alarms (score >= tau) and which timesteps adapt (score < tau).
 hparams:
-  default: {window: 5, stride: 5, latent: 16, gamma: 0.99, lr: 0.05}
-  smd_1-4: {gamma: 0.4,  lr: 0.1}
-  smd_2-1: {gamma: 0.99, lr: 0.05}
+  default: {window: 5, stride: 5, latent: 16, epochs: 10, batch_size: 8, pretrain_lr: 0.001,
+            gamma: 0.99, lr: 0.05, tau_quantile: 0.99, update_mask: timestep}
+  smd_1-4: {gamma: 0.4,  lr: 0.1,  tau_quantile: 0.97}
+  smd_2-1: {gamma: 0.99, lr: 0.05, tau_quantile: 0.9976}

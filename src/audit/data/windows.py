@@ -23,11 +23,29 @@ def make_windows(x: np.ndarray, length: int, stride: int = 1):
 
 
 def spread_scores(window_scores: np.ndarray, ends: np.ndarray, T: int) -> np.ndarray:
-    """One score per timestep. A window's score covers every timestep after the
-    previous window's end up to its own end (the first window covers 0..end)."""
+    """One score per timestep from ONE score per window. A window's score covers every
+    timestep after the previous window's end up to its own end (the first window
+    covers 0..end)."""
     out = np.zeros(T, dtype=float)
     prev = -1
     for s, e in zip(window_scores, ends):
         out[prev + 1:e + 1] = s
+        prev = e
+    return out
+
+
+def spread_step_scores(step_scores: np.ndarray, ends: np.ndarray, T: int) -> np.ndarray:
+    """One score per timestep from per-timestep window scores (N, L).
+
+    Each timestep keeps the score from the first window that covers it. With
+    stride = window this is every window's own L scores, plus the last
+    (end-aligned) window's scores for the timesteps it adds -- the same as the
+    official M2N2 code, which pads the last window and masks the repeats out.
+    """
+    out = np.zeros(T, dtype=float)
+    prev = -1
+    for s, e in zip(step_scores, ends):
+        k = e - prev                       # new timesteps this window covers
+        out[prev + 1:e + 1] = np.asarray(s)[-k:]
         prev = e
     return out

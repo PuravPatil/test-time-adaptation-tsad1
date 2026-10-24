@@ -1,7 +1,7 @@
-# SMD only: pre-trained detector vs M2N2 vs CANDI, as in CANDI Table 1 (+ M2N2 machines 1-4, 2-1).
+# SMD only: static (no-adaptation) detector vs M2N2, compared with the M2N2 paper (machines 1-4, 2-1).
 name: smd_reproduce
 datasets: [smd_1-4, smd_1-7, smd_1-8, smd_2-1, smd_2-4, smd_3-2]
-methods: [pretrained, m2n2, candi]
+methods: [pretrained, m2n2]
 threshold: fixed
 threshold_config:
-  quantile: 0.95        # tau = 95th percentile of validation scores  (CANDI alpha = 5%)
+  quantile: detector   # each detector's own tau (its tau_quantile of training scores), as in the paper

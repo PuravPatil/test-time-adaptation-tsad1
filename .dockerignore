@@ -7,6 +7,8 @@ __pycache__
 data
 results/runs
 results/tables
+results/uploads
 third_party
 notebooks
-demo
+demo/web/node_modules
+demo/web/dist

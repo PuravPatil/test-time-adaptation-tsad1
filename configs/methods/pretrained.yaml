@@ -1,7 +1,11 @@
-# CANDI's pre-trained detector with test-time adaptation switched off
-# (the "Pretrained" column of CANDI Table 1).
+# Detrend only: the same MLP trained once, EMA detrending at test time, no model updates
+# (the paper's "DT" ablation row; the official scripts' "offline + detrend", thresholding q98.0).
 name: pretrained
-adapter: audit.methods.candi_adapter.CANDIAdapter
+adapter: audit.methods.m2n2_adapter.M2N2Adapter
+normalization: ema
 backbone: default
 hparams:
-  default: {adapt: false, alpha: 0.05}
+  default: {window: 5, stride: 5, latent: 16, epochs: 10, batch_size: 8, pretrain_lr: 0.001,
+            gamma: 0.99, tau_quantile: 0.98, adapt: false}
+  smd_1-4: {gamma: 0.4}
+  smd_2-1: {gamma: 0.99}

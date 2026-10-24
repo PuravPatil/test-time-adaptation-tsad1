@@ -1,0 +1,16 @@
+# M2N2 paper Table 3 on SMD: detrend (DT) x test-time adaptation (TTA), same MLP, same seeds.
+#   normalization: none / ema   = DT off / on
+#   hparams.adapt: false / true = TTA off / on   (TTA uses the Eq. 4 per-timestep mask)
+# Four arms per machine, saved as m2n2__normalization-<none|ema>__adapt-<False|True>/.
+# The paper reports this table for M-2-1 only (results/paper_reference.json); we run all six.
+# DT on + TTA off is the same model as the `pretrained` baseline.
+name: smd_ablation
+datasets: [smd_1-4, smd_1-7, smd_1-8, smd_2-1, smd_2-4, smd_3-2]
+methods: [m2n2]
+threshold: fixed
+threshold_config:
+  quantile: detector   # each detector's own tau (its tau_quantile of training scores), as in the paper
+overrides:
+  m2n2:
+    normalization: [none, ema]
+    hparams.adapt: [false, true]

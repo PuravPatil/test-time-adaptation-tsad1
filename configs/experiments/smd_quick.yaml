@@ -1,8 +1,8 @@
 # One machine, one seed: a fast check that everything runs end to end.
 name: smd_quick
 datasets: [smd_1-7]
-methods: [pretrained, m2n2, candi]
+methods: [pretrained, m2n2]
 threshold: [fixed, streaming]
 threshold_config:
-  quantile: 0.95
+  quantile: detector   # each detector's own tau (its tau_quantile of training scores), as in the paper
 seeds: [0]

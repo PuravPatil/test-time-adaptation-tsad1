@@ -1,108 +1,17 @@
 {
-  "_note": "Paper numbers transcribed for comparison. 'candi_paper' = CANDI Table 1 (alpha=5%, F1 at the validation-percentile threshold). 'm2n2_paper' = M2N2 appendix (f1_best = F1 at the offline best threshold, f1_pa = point-adjusted). Verify against the PDFs before quoting.",
-  "candi_paper": {
-    "smd_1-7": {
-      "pretrained": {
-        "auroc": 0.883,
-        "auprc": 0.703,
-        "f1": 0.724
-      },
-      "m2n2": {
-        "auroc": 0.886,
-        "auprc": 0.718,
-        "f1": 0.723
-      },
-      "candi": {
-        "auroc": 0.922,
-        "auprc": 0.737,
-        "f1": 0.725
-      }
-    },
-    "smd_1-8": {
-      "pretrained": {
-        "auroc": 0.719,
-        "auprc": 0.332,
-        "f1": 0.092
-      },
-      "m2n2": {
-        "auroc": 0.772,
-        "auprc": 0.354,
-        "f1": 0.115
-      },
-      "candi": {
-        "auroc": 0.867,
-        "auprc": 0.423,
-        "f1": 0.213
-      }
-    },
-    "smd_2-1": {
-      "pretrained": {
-        "auroc": 0.648,
-        "auprc": 0.275,
-        "f1": 0.273
-      },
-      "m2n2": {
-        "auroc": 0.683,
-        "auprc": 0.296,
-        "f1": 0.309
-      },
-      "candi": {
-        "auroc": 0.78,
-        "auprc": 0.348,
-        "f1": 0.327
-      }
-    },
-    "smd_2-4": {
-      "pretrained": {
-        "auroc": 0.821,
-        "auprc": 0.457,
-        "f1": 0.316
-      },
-      "m2n2": {
-        "auroc": 0.828,
-        "auprc": 0.461,
-        "f1": 0.311
-      },
-      "candi": {
-        "auroc": 0.899,
-        "auprc": 0.6,
-        "f1": 0.512
-      }
-    },
-    "smd_3-2": {
-      "pretrained": {
-        "auroc": 0.451,
-        "auprc": 0.159,
-        "f1": 0.247
-      },
-      "m2n2": {
-        "auroc": 0.64,
-        "auprc": 0.188,
-        "f1": 0.194
-      },
-      "candi": {
-        "auroc": 0.717,
-        "auprc": 0.199,
-        "f1": 0.262
-      }
-    }
+ "_note": "M2N2 paper (Kim, Park, Choo; AAAI 2024), SMD, values from the main paper. Table 1: 'mlp' = MLP column, 'm2n2' = MLP + Ours. Table 3 (ablation, M-2-1 only): the m2n2__normalization-...__adapt-... arms of smd_ablation. Metric mapping, from the official code (utils/metrics.py, Exp/Tester.py): paper F1 = plain point-wise F1 at the run's threshold -> 'f1'; F1-PA -> 'f1_pa'; AUROC -> 'auroc'; AUPRC = auc(recall, precision) by the trapezoid rule -> 'pr_auc'. The paper's MLP F1 uses the best threshold chosen on the test labels (thresholding=off_f1_best), so it is compared with our 'f1_best'. Ablation rows list only threshold-free metrics, because the official scripts use a different threshold per row.",
+ "m2n2_paper": {
+  "smd_1-4": {
+   "mlp": {"f1_best": 0.273, "auroc": 0.805, "pr_auc": 0.169},
+   "m2n2": {"f1": 0.463, "f1_pa": 0.874, "auroc": 0.845, "pr_auc": 0.354}
   },
-  "m2n2_paper": {
-    "smd_1-4": {
-      "m2n2": {
-        "f1_best": 0.463,
-        "f1_pa": 0.874,
-        "auroc": 0.845,
-        "auprc": 0.354
-      }
-    },
-    "smd_2-1": {
-      "m2n2": {
-        "f1_best": 0.249,
-        "f1_pa": 0.974,
-        "auroc": 0.764,
-        "auprc": 0.28
-      }
-    }
+  "smd_2-1": {
+   "mlp": {"f1_best": 0.236, "auroc": 0.674, "pr_auc": 0.19},
+   "m2n2": {"f1": 0.249, "f1_pa": 0.974, "auroc": 0.764, "pr_auc": 0.28},
+   "m2n2__normalization-none__adapt-False": {"auroc": 0.674, "pr_auc": 0.19},
+   "m2n2__normalization-ema__adapt-False": {"auroc": 0.749, "pr_auc": 0.205},
+   "m2n2__normalization-none__adapt-True": {"auroc": 0.689, "pr_auc": 0.204},
+   "m2n2__normalization-ema__adapt-True": {"auroc": 0.764, "pr_auc": 0.28}
   }
+ }
 }

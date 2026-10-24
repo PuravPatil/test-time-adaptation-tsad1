@@ -1,7 +1,8 @@
 """One metrics module for every method. Any change here needs a test.
 
 - point_f1: plain point-wise F1, no adjustment
-- auprc:    area under the precision-recall curve from raw scores (threshold-free)
+- auprc:    area under the precision-recall curve from raw scores (threshold-free; average precision)
+- pr_auc:   the same area by the trapezoid rule, as the official M2N2 code reports "AUPRC"
 - pa_k:     PA%K (Kim et al., AAAI 2022). A labelled anomaly segment counts as
             fully detected only if more than K% of its points were flagged.
             K = 0 is ordinary point adjustment (F1-PA); K = 100 is plain F1.
@@ -11,7 +12,7 @@
 from __future__ import annotations
 
 import numpy as np
-from sklearn.metrics import average_precision_score, f1_score, precision_recall_curve, roc_auc_score
+from sklearn.metrics import auc, average_precision_score, f1_score, precision_recall_curve, roc_auc_score
 
 
 def _check(labels, other) -> tuple[np.ndarray, np.ndarray]:
@@ -42,6 +43,18 @@ def auprc(labels, scores) -> float:
     if labels.sum() == 0:
         return float("nan")
     return float(average_precision_score(labels, scores.astype(float)))
+
+
+def pr_auc(labels, scores) -> float:
+    """Area under the precision-recall curve by the trapezoid rule: sklearn
+    auc(recall, precision), exactly how the official M2N2 code computes its AUPRC
+    (utils/metrics.py). Use it to compare with the paper; auprc is the usual
+    average-precision estimate and differs slightly."""
+    labels, scores = _check(labels, scores)
+    if labels.sum() == 0:
+        return float("nan")
+    p, r, _ = precision_recall_curve(labels, scores.astype(float))
+    return float(auc(r, p))
 
 
 def auroc(labels, scores) -> float:
@@ -86,6 +99,7 @@ def evaluate(labels, scores, preds, pa_k_values=(0, 20, 50, 80, 100)) -> dict:
     out = {
         "f1": point_f1(labels, preds),
         "auprc": auprc(labels, scores),
+        "pr_auc": pr_auc(labels, scores),
         "auroc": auroc(labels, scores),
         "f1_best": f1_best(labels, scores),
         "f1_pa": f1_pa(labels, preds),

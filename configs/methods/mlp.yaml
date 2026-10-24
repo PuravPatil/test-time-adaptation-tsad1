@@ -1,0 +1,10 @@
+# The paper's "MLP" baseline (Table 1): the same MLP trained once, no detrending, no model updates
+# (the official scripts' "offline"). The paper's MLP F1 uses the best threshold chosen on the test
+# labels (thresholding=off_f1_best), so compare it with our `f1_best`; our `f1` uses the q99 tau below.
+name: mlp
+adapter: audit.methods.m2n2_adapter.M2N2Adapter
+normalization: none
+backbone: default
+hparams:
+  default: {window: 5, stride: 5, latent: 16, epochs: 10, batch_size: 8, pretrain_lr: 0.001,
+            tau_quantile: 0.99, adapt: false}
