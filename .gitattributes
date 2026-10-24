@@ -1,0 +1,9 @@
+# Store text files with LF line endings in the repository, whatever the OS that edits them
+# (Windows editors write CRLF; without this every touched file shows as fully rewritten).
+* text=auto
+*.pptx binary
+*.pdf binary
+*.npy binary
+*.png binary
+*.xlsx binary
+*.parquet binary
