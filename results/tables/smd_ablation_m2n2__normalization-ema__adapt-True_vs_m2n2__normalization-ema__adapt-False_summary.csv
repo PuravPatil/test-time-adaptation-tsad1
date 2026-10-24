@@ -1,0 +1,5 @@
+metric,n_datasets,mean_diff,datasets_up,datasets_down,datasets_ci_up,datasets_ci_down,wilcoxon_p
+auroc,6,0.0025558651569469607,4,2,4,2,0.6875
+auprc,6,-0.0028227063872745526,4,2,3,2,1.0
+f1,6,0.005233944465043387,4,2,4,2,0.4375
+pa_k_50,6,0.006518229308556063,4,2,3,1,0.5625

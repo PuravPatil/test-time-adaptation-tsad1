@@ -1,0 +1,17 @@
+dataset,method,metric,ours,paper,source,diff
+smd_2-1,m2n2__normalization-ema__adapt-False,f1_best,0.386±0.013,0.234,m2n2_paper,+0.152
+smd_2-1,m2n2__normalization-ema__adapt-False,f1_pa,0.507±0.016,0.855,m2n2_paper,-0.348
+smd_2-1,m2n2__normalization-ema__adapt-False,auroc,0.817±0.018,0.749,m2n2_paper,+0.068
+smd_2-1,m2n2__normalization-ema__adapt-False,auprc,0.352±0.011,0.205,m2n2_paper,+0.147
+smd_2-1,m2n2__normalization-ema__adapt-True,f1_best,0.355±0.011,0.249,m2n2_paper,+0.106
+smd_2-1,m2n2__normalization-ema__adapt-True,f1_pa,0.527±0.015,0.974,m2n2_paper,-0.447
+smd_2-1,m2n2__normalization-ema__adapt-True,auroc,0.792±0.015,0.764,m2n2_paper,+0.028
+smd_2-1,m2n2__normalization-ema__adapt-True,auprc,0.330±0.011,0.280,m2n2_paper,+0.050
+smd_2-1,m2n2__normalization-none__adapt-False,f1_best,0.441±0.004,0.236,m2n2_paper,+0.205
+smd_2-1,m2n2__normalization-none__adapt-False,f1_pa,0.329±0.020,0.814,m2n2_paper,-0.485
+smd_2-1,m2n2__normalization-none__adapt-False,auroc,0.683±0.007,0.674,m2n2_paper,+0.009
+smd_2-1,m2n2__normalization-none__adapt-False,auprc,0.367±0.006,0.190,m2n2_paper,+0.177
+smd_2-1,m2n2__normalization-none__adapt-True,f1_best,0.439±0.012,0.239,m2n2_paper,+0.200
+smd_2-1,m2n2__normalization-none__adapt-True,f1_pa,0.563±0.007,0.881,m2n2_paper,-0.318
+smd_2-1,m2n2__normalization-none__adapt-True,auroc,0.736±0.004,0.689,m2n2_paper,+0.047
+smd_2-1,m2n2__normalization-none__adapt-True,auprc,0.376±0.009,0.204,m2n2_paper,+0.172
