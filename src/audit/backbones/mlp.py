@@ -1,10 +1,10 @@
-"""MLP autoencoder used by both M2N2 and CANDI (CPU, PyTorch).
+"""A one-hidden-layer MLP autoencoder, plus the shared training and scoring helpers (CPU, PyTorch).
 
-A window (L, D) is flattened to L*D, encoded to a d-dimensional latent and
-decoded back. ``encode`` is exposed because CANDI measures distances in the
-frozen latent space.
+The paper's own architecture is in m2n2.py; ``pretrain`` and ``window_mse`` work for any backbone.
 """
 from __future__ import annotations
+
+import copy
 
 import numpy as np
 import torch
@@ -33,27 +33,45 @@ def window_mse(x: torch.Tensor, x_hat: torch.Tensor) -> torch.Tensor:
     return ((x - x_hat) ** 2).flatten(1).mean(dim=1)
 
 
-def pretrain(model: nn.Module, windows: np.ndarray, epochs: int = 30, lr: float = 1e-3,
-             batch_size: int = 256, seed: int = 0) -> list[float]:
-    """Adam + cosine schedule, as in CANDI's pre-training. Returns per-epoch loss."""
+def pretrain(model: nn.Module, windows: np.ndarray, epochs: int = 10, lr: float = 1e-3,
+             batch_size: int = 8, seed: int = 0, optimizer: str = "adamw",
+             schedule: str = "none", keep_best: bool = True) -> list[float]:
+    """Train on normal windows with MSE reconstruction loss. Returns per-epoch mean loss.
+
+    Defaults follow the official M2N2 trainer (Exp/MLP.py): AdamW (weight decay 0),
+    constant learning rate, shuffled mini-batches, and the weights of the epoch with
+    the lowest training loss are kept ("best.pth"). ``optimizer="adam"`` and
+    ``schedule="cosine"`` give our earlier setup.
+    """
     g = torch.Generator().manual_seed(seed)
     data = torch.as_tensor(windows, dtype=torch.float32)
-    opt = torch.optim.Adam(model.parameters(), lr=lr)
-    sched = torch.optim.lr_scheduler.CosineAnnealingLR(opt, T_max=max(epochs, 1))
-    history = []
+    if optimizer == "adamw":
+        opt = torch.optim.AdamW(model.parameters(), lr=lr, weight_decay=0.0)
+    elif optimizer == "adam":
+        opt = torch.optim.Adam(model.parameters(), lr=lr)
+    else:
+        raise ValueError(f"optimizer must be 'adamw' or 'adam', got {optimizer!r}")
+    sched = torch.optim.lr_scheduler.CosineAnnealingLR(opt, T_max=max(epochs, 1)) if schedule == "cosine" else None
+    history, best_loss, best_state = [], float("inf"), None
     model.train()
     for _ in range(epochs):
         perm = torch.randperm(len(data), generator=g)
         total = 0.0
         for i in range(0, len(data), batch_size):
             batch = data[perm[i:i + batch_size]]
-            loss = window_mse(batch, model(batch)).mean()
+            loss = ((model(batch) - batch) ** 2).mean()
             opt.zero_grad()
             loss.backward()
             opt.step()
             total += loss.item() * len(batch)
-        sched.step()
-        history.append(total / len(data))
+        if sched:
+            sched.step()
+        epoch_loss = total / len(data)
+        history.append(epoch_loss)
+        if keep_best and epoch_loss < best_loss:
+            best_loss, best_state = epoch_loss, copy.deepcopy(model.state_dict())
+    if keep_best and best_state is not None:
+        model.load_state_dict(best_state)
     model.eval()
     return history
 

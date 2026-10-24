@@ -2,7 +2,7 @@ import numpy as np
 import pytest
 
 from audit.evaluation.metrics import (
-    adjust_predictions, anomaly_segments, auprc, auroc, evaluate, f1_best, f1_pa, pa_k, point_f1,
+    adjust_predictions, anomaly_segments, auprc, auroc, evaluate, f1_best, f1_pa, pa_k, point_f1, pr_auc,
 )
 
 # One 4-point anomaly segment (indices 2-5) and one 2-point segment (8-9).
@@ -43,7 +43,15 @@ def test_auprc_perfect_scores():
 
 def test_evaluate_keys():
     out = evaluate(LABELS, PREDS.astype(float), PREDS, pa_k_values=(0, 50))
-    assert set(out) == {"f1", "auprc", "auroc", "f1_best", "f1_pa", "pa_k_0", "pa_k_50"}
+    assert set(out) == {"f1", "auprc", "pr_auc", "auroc", "f1_best", "f1_pa", "pa_k_0", "pa_k_50"}
+
+
+def test_pr_auc_is_the_trapezoid_area():
+    from sklearn.metrics import auc, precision_recall_curve
+    scores = np.array([0.1, 0.4, 0.35, 0.8, 0.2, 0.9, 0.3, 0.05, 0.7, 0.6])
+    p, r, _ = precision_recall_curve(LABELS, scores)
+    assert pr_auc(LABELS, scores) == pytest.approx(auc(r, p))
+    assert pr_auc(LABELS, LABELS.astype(float)) == pytest.approx(1.0)
 
 
 def test_length_mismatch_raises():

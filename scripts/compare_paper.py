@@ -24,7 +24,8 @@ def load_runs(root: Path, experiment: str) -> pd.DataFrame:
 
 def fmt(vals) -> str:
     vals = np.asarray(vals, dtype=float)
-    return f"{vals.mean():.3f}±{vals.std():.3f}" if len(vals) > 1 else f"{vals.mean():.3f}"
+    # sample std (ddof=1), the same as make_tables.py
+    return f"{vals.mean():.3f}±{vals.std(ddof=1):.3f}" if len(vals) > 1 else f"{vals.mean():.3f}"
 
 
 def main() -> None:
@@ -42,7 +43,7 @@ def main() -> None:
 
     lines = []
     for (dataset, method), g in df.groupby(["dataset", "method"]):
-        for source in ("candi_paper", "m2n2_paper"):
+        for source in ("m2n2_paper",):
             paper = ref[source].get(dataset, {}).get(method)
             if not paper:
                 continue

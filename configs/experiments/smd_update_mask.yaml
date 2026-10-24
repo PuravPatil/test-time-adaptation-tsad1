@@ -1,0 +1,11 @@
+# Does the update rule matter? Paper Eq. 4 (mask the loss per timestep predicted normal)
+# vs our earlier version (skip the whole window when its score >= tau). EMA on, TTA on.
+name: smd_update_mask
+datasets: [smd_1-4, smd_1-7, smd_1-8, smd_2-1, smd_2-4, smd_3-2]
+methods: [m2n2]
+threshold: fixed
+threshold_config:
+  quantile: detector   # each detector's own tau (its tau_quantile of training scores), as in the paper
+overrides:
+  m2n2:
+    hparams.update_mask: [window, timestep]

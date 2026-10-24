@@ -1,5 +1,5 @@
 name: smd
 description: Server Machine Dataset (28 machines, 38 variables). Dataset names are smd_<machine>, e.g. smd_1-7.
 loader: audit.data.smd
-# Machines used in the papers: M2N2 -> 1-4, 2-1;  CANDI -> 1-7, 1-8, 2-1, 2-4, 3-2.
-# Window sizes live in the method configs (M2N2: 5, CANDI: 10).
+# Machines the M2N2 paper reports: 1-4, 2-1.
+# Window sizes live in the method configs (M2N2: 5).

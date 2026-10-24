@@ -1,5 +1,5 @@
 # Purav: fixed tau vs a streaming threshold, for both methods.
 name: streaming_threshold
 datasets: [smd, msl, smap, creditcard]
-methods: [m2n2, candi]
+methods: [m2n2]
 threshold: [fixed, streaming]

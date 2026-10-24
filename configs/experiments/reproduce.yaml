@@ -1,5 +1,5 @@
 # Weeks 1-3: both methods as published, on the shared harness.
 name: reproduce
 datasets: [smd, msl, smap, creditcard]
-methods: [m2n2, candi]
+methods: [m2n2]
 threshold: fixed

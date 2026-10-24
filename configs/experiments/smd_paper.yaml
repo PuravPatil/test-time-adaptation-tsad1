@@ -1,0 +1,10 @@
+# Reproduce the paper's SMD rows of Table 1: MLP vs MLP + M2N2, machines 1-4 and 2-1, 5 seeds.
+#   python scripts/run.py --config configs/experiments/smd_paper.yaml
+#   python scripts/compare_paper.py --experiment smd_paper
+# The threshold is each detector's own tau (its tau_quantile of training scores), as in the paper.
+name: smd_paper
+datasets: [smd_1-4, smd_2-1]
+methods: [mlp, pretrained, m2n2]
+threshold: fixed
+threshold_config:
+  quantile: detector
