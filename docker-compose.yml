@@ -2,16 +2,23 @@
 #   docker compose run --rm data        # download + preprocess SMD (needs internet)
 #   docker compose run --rm test
 #   docker compose run --rm quick       # one machine, one seed
-#   docker compose run --rm smd         # 6 machines x 3 methods x 3 seeds
+#   docker compose run --rm smd         # 6 machines x 2 methods x 5 seeds
+#   docker compose run --rm ablation    # paper Table 3: detrend x adaptation, 6 machines x 4 arms x 5 seeds
 #   docker compose run --rm compare     # ours vs the papers' numbers
+#   docker compose up api web           # demo: app on http://localhost:8080, API docs on :8000/docs
 x-base: &base
   build: .
   image: tsad
   volumes:
     - ./data:/app/data
     - ./results:/app/results
+  environment:
+    # Docker has no git, so pass the commit in from the host (saved in every run.json):
+    #   bash:       export GIT_COMMIT=$(git describe --always --dirty --abbrev=40)
+    #   PowerShell: $env:GIT_COMMIT = git describe --always --dirty --abbrev=40
+    GIT_COMMIT: ${GIT_COMMIT:-unknown}
   cpus: 2            # batch-1 updates do not scale past ~2 threads; raise if you have spare cores
-  mem_limit: 4g      # CANDI's attention module is the memory-heavy part
+  mem_limit: 4g      # headroom for PyTorch
 
 services:
   data:
@@ -26,6 +33,27 @@ services:
   smd:
     <<: *base
     command: python scripts/run.py --config configs/experiments/smd_reproduce.yaml
+  ablation:
+    <<: *base
+    command: python scripts/run.py --config configs/experiments/smd_ablation.yaml
   compare:
     <<: *base
     command: python scripts/compare_paper.py
+  api:
+    # FastAPI backend for the demo (demo/api/). http://localhost:8000/docs
+    <<: *base
+    build:
+      context: .
+      dockerfile: demo/api/Dockerfile
+    image: tsad-api
+    ports:
+      - "8000:8000"
+    command: uvicorn tsad_api.main:create_app --factory --app-dir demo/api --host 0.0.0.0 --port 8000
+  web:
+    # React frontend (demo/web/), served by nginx; /api is forwarded to the api service.
+    build: demo/web
+    image: tsad-web
+    ports:
+      - "8080:80"
+    depends_on:
+      - api

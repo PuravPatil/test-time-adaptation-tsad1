@@ -1,7 +1,11 @@
 # Live demo (weeks 7–8)
 
-Streaming dashboard that replays a test stream from `results/runs/` and lets a
-viewer toggle each extension: EMA vs RevIN, fixed vs streaming τ, and backbone,
-with latency shown live.
+Design direction: "D · Modern, kinetic type + upload any dataset" (dark theme, bold
+animated headline, Upload → Map columns → Results flow).
 
-TODO: pick the framework and build it once the extension results are in.
+- `api/` — FastAPI backend: saved runs, uploads of any numeric time series
+  (.csv .tsv .txt .xlsx .parquet .json .npy), background jobs, WebSocket replay.
+  See `api/README.md`. Run: `docker compose up api` → http://localhost:8000/docs
+- `web/` — React frontend (Vite), design D: upload → map columns → live results, and the
+  audit's headline numbers read from the API. See `web/README.md`.
+  Run both: `docker compose up api web` → http://localhost:8080

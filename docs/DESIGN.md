@@ -8,7 +8,7 @@ Summary:
 
 - Every method sits behind `audit.methods.Detector` (`fit`, `score`, `train_scores`).
 - Thresholds are separate from methods (`audit.thresholds`), so the streaming
-  threshold works for both M2N2 and CANDI.
+  threshold works for every method.
 - Metrics live in one module (`audit.evaluation.metrics`): plain F1, AUPRC,
   PA%K, and F1-PA for reference only.
 - Every run saves raw scores, so metrics can be recomputed without rerunning.
