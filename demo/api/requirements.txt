@@ -1,0 +1,9 @@
+# API extras on top of the project's requirements.txt (torch, numpy, pandas, scipy, ...).
+# Bounded like the main file so a fresh install cannot jump a major version.
+fastapi>=0.110,<1
+pydantic>=2.5,<3
+uvicorn[standard]>=0.29,<1
+python-multipart>=0.0.9,<1   # file uploads
+openpyxl>=3.1,<4             # .xlsx uploads
+pyarrow>=15                  # .parquet uploads
+httpx>=0.27,<1               # FastAPI TestClient, for tests
