@@ -19,7 +19,6 @@ export default function Nav({ health }) {
       <div className="nav-links">
         <a href="#upload">Upload</a>
         <a href="#upload">Results</a>
-        <a href="#audit">The audit</a>
         <span className={`status-chip ${health.state}`} role="status">
           <span className={`dot ${health.state === "online" ? "pulse" : ""}`} />
           {LABEL[health.state]}

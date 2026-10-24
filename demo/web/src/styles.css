@@ -169,6 +169,11 @@ button, input, select { font: inherit; color: inherit; }
 .legend span { display: inline-flex; align-items: center; gap: 6px; }
 .chart-head { display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 12px; }
 .chart svg { width: 100%; height: auto; display: block; }
+.all-metrics { display: grid; grid-template-columns: repeat(auto-fill, minmax(230px, 1fr)); gap: 12px; }
+.metric-row { border: 1px solid var(--line); border-radius: 16px; padding: 16px 18px; display: flex; flex-direction: column; gap: 4px; }
+.metric-row .k { font-size: 13px; color: var(--text-muted); }
+.metric-row .v { font-family: var(--display); font-weight: 700; font-size: 26px; letter-spacing: -0.03em; color: var(--text); }
+.metric-row .hint { font-size: 12px; line-height: 1.45; color: var(--text-faint); }
 .warn-list { margin: 0; padding-left: 18px; color: var(--text-soft); font-size: 14px; line-height: 1.6; }
 
 /* audit */

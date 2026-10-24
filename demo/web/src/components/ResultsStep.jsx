@@ -1,6 +1,5 @@
 import { useEffect, useState } from "react";
 import { api } from "../api.js";
-import { pct } from "../findings.js";
 import { METHODS } from "./MapStep.jsx";
 import ScoreChart from "./ScoreChart.jsx";
 
@@ -90,7 +89,6 @@ export default function ResultsStep({ jobId, onRestart }) {
   const metrics = info?.metrics;
   const ds = info?.dataset;
   const adapted = request?.method === "m2n2";
-  const alarmRate = series.preds.length ? series.preds.filter((p) => p > 0).length / series.preds.length : null;
 
   return (
     <div id="results" className="fade-up" style={{ display: "flex", flexDirection: "column", gap: 24 }}>
@@ -131,7 +129,7 @@ export default function ResultsStep({ jobId, onRestart }) {
               </span>
             </div>
           )}
-          {!metrics && <Metric k="Alarm rate" v={alarmRate == null ? "—" : pct(alarmRate, 1)} />}
+          {!metrics && <Metric k="τ (threshold)" v={info.tau > 0 ? sci(info.tau) : "moving"} sub="score at or above τ = alarm" />}
           <Metric
             hot={adapted}
             k={adapted ? "Steps used to adapt" : "Adaptation"}
@@ -156,6 +154,8 @@ export default function ResultsStep({ jobId, onRestart }) {
         <ScoreChart scores={series.scores} preds={series.preds} labels={series.labels} total={series.total}
           tau={info?.tau} live={live} n={series.n || ds?.n_test} />
       </div>
+
+      {info && <AllMetrics metrics={metrics} info={info} stats={stats} adapted={adapted} ds={ds} />}
 
       {ds && (
         <div className="card" style={{ display: "flex", flexDirection: "column", gap: 10 }}>
@@ -193,5 +193,59 @@ function Metric({ k, v, sub, hot }) {
   );
 }
 
+// Every metric the API returns (audit.evaluation.metrics.evaluate), with what it means.
+// PA%K at K=0 equals F1-PA and at K=100 equals F1, so those two are not repeated.
+const METRIC_ROWS = [
+  ["auroc", "AUROC", "How well scores rank anomalies above normal points (threshold-free)"],
+  ["auprc", "AUPRC", "Average precision over all thresholds (threshold-free)"],
+  ["pr_auc", "PR-AUC", "Area under the precision-recall curve, the way the paper reports AUPRC"],
+  ["f1", "F1", "Point-wise F1 at τ"],
+  ["f1_pa", "F1-PA", "Point-adjusted: a whole anomaly counts if any point of it is caught"],
+  ["pa_k_20", "PA%K · K=20", "An anomaly counts if more than 20% of it is caught"],
+  ["pa_k_50", "PA%K · K=50", "An anomaly counts if more than 50% of it is caught"],
+  ["pa_k_80", "PA%K · K=80", "An anomaly counts if more than 80% of it is caught"],
+  ["f1_best", "Best F1", "Best F1 with a threshold chosen on the labels (reference only)"],
+];
+
+function AllMetrics({ metrics, info, stats, adapted, ds }) {
+  const run = [
+    ["τ (threshold)", info.tau > 0 ? sci(info.tau) : "moving (streaming)", "A score at or above τ raises an alarm"],
+    ["Timesteps used to adapt", adapted && stats.normal_step_rate != null ? pct(stats.normal_step_rate, 1) : "off",
+      "Timesteps below τ that updated the model"],
+    ["Model updates", adapted && stats.n_updates != null ? stats.n_updates.toLocaleString() : "0",
+      stats.n_windows != null ? `over ${stats.n_windows.toLocaleString()} windows` : "windows that updated the model"],
+    ["Labelled anomalies", ds?.test_anomaly_rate != null ? pct(ds.test_anomaly_rate, 1) : "—", "Share of the test part"],
+    ["Speed", info.ms_per_step != null ? `${msFmt(info.ms_per_step)} ms` : "—", "Per timestep, adaptation included"],
+  ];
+  return (
+    <div className="card" style={{ display: "flex", flexDirection: "column", gap: 16 }}>
+      <span className="label-caps">All metrics</span>
+      {metrics ? (
+        <div className="all-metrics">
+          {METRIC_ROWS.map(([key, label, hint]) => <Row key={key} label={label} value={fmt(metrics[key])} hint={hint} />)}
+        </div>
+      ) : (
+        <p className="muted" style={{ margin: 0 }}>No label column, so accuracy metrics can't be computed for this run.</p>
+      )}
+      <span className="label-caps" style={{ marginTop: 8 }}>This run</span>
+      <div className="all-metrics">
+        {run.map(([label, value, hint]) => <Row key={label} label={label} value={value} hint={hint} />)}
+      </div>
+    </div>
+  );
+}
+
+function Row({ label, value, hint }) {
+  return (
+    <div className="metric-row">
+      <span className="k">{label}</span>
+      <span className="v">{value}</span>
+      <span className="hint">{hint}</span>
+    </div>
+  );
+}
+
 const fmt = (x) => (x == null ? "—" : x.toFixed(3));
+const pct = (x, digits = 0) => `${(100 * x).toFixed(digits)}%`;
+const sci = (x) => (x >= 0.01 ? x.toFixed(4) : x.toExponential(2));
 const msFmt = (x) => (x >= 0.01 ? x.toFixed(3) : x.toPrecision(2));

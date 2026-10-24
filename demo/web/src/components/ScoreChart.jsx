@@ -18,7 +18,7 @@ function bands(bits, x, step, y, h) {
   return d || "M0 0";
 }
 
-const tick = (k) => (k >= 0 ? String(10 ** k) : k >= -3 ? (10 ** k).toFixed(-k) : `1e${k}`);
+const tick = (k) => (k >= 4 || k < -3 ? `1e${k}` : k >= 0 ? String(10 ** k) : (10 ** k).toFixed(-k));
 
 export default function ScoreChart({ scores, preds, labels, total, tau, live, n }) {
   const count = Math.max(total || scores.length, 1);

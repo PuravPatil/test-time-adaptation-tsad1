@@ -1,13 +1,10 @@
 import { useEffect, useRef, useState } from "react";
 import { api } from "./api.js";
-import { useFindings } from "./findings.js";
 import Nav from "./components/Nav.jsx";
 import Hero from "./components/Hero.jsx";
-import Ticker from "./components/Ticker.jsx";
 import UploadStep from "./components/UploadStep.jsx";
 import MapStep from "./components/MapStep.jsx";
 import ResultsStep from "./components/ResultsStep.jsx";
-import AuditSection from "./components/AuditSection.jsx";
 
 function useHealth() {
   const [health, setHealth] = useState({ state: "checking" });
@@ -32,7 +29,6 @@ const STEPS = ["Upload", "Map columns", "Results"];
 
 export default function App() {
   const health = useHealth();
-  const findings = useFindings(health.state === "online");
   const [step, setStep] = useState(0);
   const [upload, setUpload] = useState(null);
   const [jobId, setJobId] = useState(null);
@@ -50,7 +46,6 @@ export default function App() {
         <Nav health={health} />
         <Hero onUpload={() => go(0)} />
       </div>
-      <Ticker findings={findings} />
 
       <section id="upload" ref={flowRef} className="wrap flow" aria-labelledby="flow-title">
         <div className="flow-head">
@@ -112,7 +107,6 @@ export default function App() {
       </section>
 
       <div className="wrap">
-        <AuditSection findings={findings} />
         <footer className="footer">
           <span>TSAD audit · M2N2 (Kim, Park, Choo, AAAI 2024) re-implemented and audited on SMD.</span>
           <span>Runs on uploaded data are exploratory: settings were tuned on SMD.</span>
