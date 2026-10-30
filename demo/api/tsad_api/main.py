@@ -22,6 +22,7 @@ from typing import Literal
 
 from fastapi import FastAPI, File, HTTPException, Query, Response, UploadFile, WebSocket, WebSocketDisconnect
 from fastapi.middleware.cors import CORSMiddleware
+from fastapi.responses import RedirectResponse
 from pydantic import BaseModel, Field
 
 from audit.data.upload import UploadError
@@ -73,6 +74,11 @@ def create_app(settings: Settings | None = None) -> FastAPI:
     app.add_middleware(CORSMiddleware, allow_origins=settings.cors_origins,
                        allow_methods=["GET", "POST"], allow_headers=["*"])
     app.state.settings, app.state.jobs, app.state.store = settings, jobs, store
+
+    @app.get("/", include_in_schema=False)
+    def root() -> RedirectResponse:
+        """Opening the API's address in a browser goes to the app; the API docs stay at /docs."""
+        return RedirectResponse(settings.app_url)
 
     @app.get("/health")
     def health() -> dict:

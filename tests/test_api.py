@@ -89,6 +89,11 @@ def _wait(client, job_id, timeout=20):
     raise AssertionError("job did not finish")
 
 
+def test_root_sends_a_browser_to_the_app(client):
+    r = client.get("/", follow_redirects=False)
+    assert r.status_code == 307 and r.headers["location"] == "http://localhost:8080"
+
+
 def test_health_and_experiments(client):
     assert client.get("/health").json()["status"] == "ok"
     exps = client.get("/experiments").json()

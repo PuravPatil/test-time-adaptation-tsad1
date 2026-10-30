@@ -1,0 +1,2 @@
+We rebuilt M2N2 (AAAI 2024) from the paper and the authors' code: 12 of the paper's 14 SMD numbers land within ±0.01 over 5 seeds, and it shows detrending, not adaptation, does most of the work. Then we put it in Drift Studio, a web app where you can stream your own time series through it and watch every score, alarm and model update.
+github.com/PuravPatil/test-time-adaptation-tsad1

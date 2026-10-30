@@ -28,6 +28,7 @@ class Settings:
     max_rows: int = 2_000_000
     upload_ttl_hours: float = 24.0
     max_workers: int = 1                       # jobs run one at a time: CPU-bound
+    app_url: str = "http://localhost:8080"     # where a browser opening the API's own address is sent
     cors_origins: list[str] = field(default_factory=lambda: ["http://localhost:5173", "http://127.0.0.1:5173"])
     methods: dict[str, tuple[str, dict]] = field(default_factory=lambda: dict(DEFAULT_METHODS))
 
@@ -58,4 +59,5 @@ class Settings:
         s.upload_ttl_hours = float(os.environ.get("TSAD_UPLOAD_TTL_HOURS", s.upload_ttl_hours))
         s.max_workers = int(os.environ.get("TSAD_MAX_WORKERS", s.max_workers))
         s.cors_origins = _env_list("TSAD_CORS_ORIGINS", s.cors_origins)
+        s.app_url = os.environ.get("TSAD_APP_URL", s.app_url)
         return s
